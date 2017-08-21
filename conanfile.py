@@ -17,14 +17,11 @@ class PcreConan(ConanFile):
     
     options = {
         "shared": [True, False],
-        "build8bit": [True, False],
-        "build16bit": [True, False],
-        "build32bit": [True, False],
         "enablecpp": [True, False],
-        "pcregrep": [True, False]
+        "enableutf": [True, False]
     }
     
-    default_options = "shared=True","build8bit=False","build16bit=False","build32bit=False","enablecpp=True","pcregrep=False"
+    default_options = "shared=True","enablecpp=True","enableutf=True"
 
     def source(self):
         version = self.version[0:self.version.rfind('.')]
@@ -46,8 +43,9 @@ class PcreConan(ConanFile):
         self.run('mkdir -p pkg && mkdir -p build')
         self.run('cd build && cmake %s -DCMAKE_SKIP_BUILD_RPATH=FALSE ' % cmake.command_line +
                 '-DBUILD_SHARED_LIBS:BOOL=%s' % ("TRUE" if self.options.shared else "FALSE") +
-            '-DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE -DCMAKE_INSTALL_RPATH="%s/lib" ' % finished_package +
-            '-DCMAKE_INSTALL_PREFIX:PATH="%s" -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE -f ../' % finished_package)
+                ' -DPCRE_SUPPORT_UTF:BOOL=%s' % ("TRUE" if self.options.enableutf else "FALSE") +
+            ' -DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE -DCMAKE_INSTALL_RPATH="%s/lib"' % finished_package +
+            ' -DCMAKE_INSTALL_PREFIX:PATH="%s" -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE -f ../' % finished_package)
 
         # build
         self.run("cd build && make %s install" % make_options)
