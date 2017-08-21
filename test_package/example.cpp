@@ -8,6 +8,6 @@ int main() {
     int errOffset;
     const char *pcreError;
     
-    auto compiled = pcre_compile(regex, 0, &pcreError, &errOffset, NULL);
+    pcre * compiled = pcre_compile(regex, 0, &pcreError, &errOffset, NULL);
     pcre_free(compiled);
 }

@@ -12,7 +12,7 @@ class PcreConan(ConanFile):
     description = "pcre[1] package"
     default_options = "shared=False"
     generators = "cmake"
-    requires = "bzip2/[~=1.0.6]@kmaragon/stable","zlib/[~=1.2.8]@lasote/stable"
+    requires = "bzip2/[~=1.0.6]@lasote/stable","zlib/[~=1.2.8]@lasote/stable"
     exports = "CMakeLists.txt"
     
     options = {
@@ -24,7 +24,7 @@ class PcreConan(ConanFile):
         "pcregrep": [True, False]
     }
     
-    default_options = "shared=False","build8bit=False","build16bit=False","build32bit=False","enablecpp=True","pcregrep=False"
+    default_options = "shared=True","build8bit=False","build16bit=False","build32bit=False","enablecpp=True","pcregrep=False"
 
     def source(self):
         version = self.version[0:self.version.rfind('.')]
@@ -59,9 +59,14 @@ class PcreConan(ConanFile):
 
     def package_info(self):
         if self.options.shared:
-            self.cpp_info.libs = ["pcre"]
+	    if self.options.enablecpp:
+               self.cpp_info.libs = ["pcre", "pcrecpp"]
+            else:
+               self.cpp_info.libs = ["pcre"]
         else:
             self.cpp_info.libs = ["libpcre.a"]
+	    if self.options.enablecpp:
+               self.cpp_info.libs = ["libpcrecpp.a"]
         self.cpp_info.libdirs = ["lib"]
         self.cpp_info.includedirs = ["include"]
         self.cpp_info.bindirs = ["bin"]
